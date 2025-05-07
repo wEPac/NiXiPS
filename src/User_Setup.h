@@ -39,8 +39,8 @@
 
 // For ST7735, ST7789 and ILI9341 ONLY, define the colour order IF the blue and red are swapped on your display
 // Try ONE option at a time to find the correct colour order for your display
-//  #define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
-//  #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
+//#define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
+//#define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
 
 
 // If colours are inverted (white shows as black) then uncomment one of the next
@@ -125,9 +125,9 @@
 //#define SPI_FREQUENCY  50000000 // 
 //#define SPI_FREQUENCY  60000000 // 
 //#define SPI_FREQUENCY  70000000 // 22 fps
-#define SPI_FREQUENCY  80000000 // 24 fps
+//#define SPI_FREQUENCY  80000000 // 24 fps
 //#define SPI_FREQUENCY  90000000 // 28 fps
-//#define SPI_FREQUENCY 100000000 // 28 fps
+#define SPI_FREQUENCY 100000000 // 28 fps
 //#define SPI_FREQUENCY 110000000 // 28 fps
 //#define SPI_FREQUENCY 120000000 // 28 fps
 
