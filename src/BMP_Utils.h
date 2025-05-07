@@ -71,8 +71,8 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
   //if ( (depth == 16) || (depth == 24) )
   { // casual Windows bitmap of 16 or 24 bit/pixel
     y +=                  h - 1;
-    //tft.setSwapBytes(true);       // bitmap starts with last row and ends with 1rst row
-    spr.setSwapBytes(true);       // bitmap starts with last row and ends with 1rst row
+    //tft.setSwapBytes(true);       // swap color Bytes
+    //spr.setSwapBytes(true);       // swap color Bytes
     bitmap.seek(seekOffset);      // go to Pixel Array
 
     uint16_t  padding =   (4 - ((w * field) & 3)) & 3;  // each bitmap row is n x 4 bytes
@@ -94,7 +94,9 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
         for (uint16_t col = 0; col < w; col++)
         {
           b =       *bptr++;  g = *bptr++;  r = *bptr++;
-          *tptr++ = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+          //*tptr++ = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+          rgb =     ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+          *tptr++ = ((rgb & 0xFF00) >> 8) | ((rgb & 0x00FF) << 8); // swap color bytes
         }
       }
       else
@@ -104,9 +106,11 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
           rgb =     *tptr;
           //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0200) >> 4) | ((rgb & 0x001F));
           //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0100) >> 3) | ((rgb & 0x001F));
-          *tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0080) >> 2) | ((rgb & 0x001F));
+          //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0080) >> 2) | ((rgb & 0x001F));
           //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0040) >> 1) | ((rgb & 0x001F));
           //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x001F));
+          rgb =     ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0080) >> 2) | ((rgb & 0x001F);
+          *tptr++ = ((rgb & 0xFF00) >> 8) | ((rgb & 0x00FF) << 8); // swap color bytes
         }
       }
       
@@ -123,7 +127,7 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
       //selectCSl(SD_CS);
     }
     //tft.setSwapBytes(false);       // 
-    spr.setSwapBytes(false);       //
+    //spr.setSwapBytes(false);       //
     
     //Serial.print("Loaded in "); Serial.print(millis() - startTime); Serial.println(" ms");
     //spr.print("Loaded in "); spr.print(millis() - startTime); spr.println(" ms");
