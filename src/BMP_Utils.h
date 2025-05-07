@@ -70,20 +70,18 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
   if (signature == 0x4D42 && ( (depth == 16) || (depth == 24) ) )
   //if ( (depth == 16) || (depth == 24) )
   { // casual Windows bitmap of 16 or 24 bit/pixel
-    y +=                  h - 1;
+    uint8_t   lineBuffer[w * field];
+    uint16_t  padding =   (4 - ((w * field) & 3)) & 3;  // each bitmap row is n x 4 bytes
+    //uint8_t   lineBuffer[((w * field + 31) / 32) * 4]; // full row
+    //row size    =         ((w * field + 31) / 32) * 4;
+    //pixel array =         h * (((w * field + 31) / 32) * 4);
+    
+    y +=                  h - 1;  // bitmap starts with last line
     //tft.setSwapBytes(true);       // swap color Bytes
     //spr.setSwapBytes(true);       // swap color Bytes
     bitmap.seek(seekOffset);      // go to Pixel Array
 
-    uint16_t  padding =   (4 - ((w * field) & 3)) & 3;  // each bitmap row is n x 4 bytes
-    uint8_t   lineBuffer[w * field];
-    //uint8_t   lineBuffer[((w * field + 31) / 32) * 4]; // full row
-    //row size    =         ((w * field + 31) / 32) * 4;
-    //pixel array =         h * (((w * field + 31) / 32) * 4);
-
     for (row = 0; row < h; row++)
-    //row = ???
-    //while (row--)
     {
       bitmap.read(lineBuffer, sizeof(lineBuffer));
       uint8_t*  bptr =    lineBuffer;
@@ -105,11 +103,11 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
         {
           rgb =     *tptr;
           //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0200) >> 4) | ((rgb & 0x001F));
-          //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0100) >> 3) | ((rgb & 0x001F));
-          //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0080) >> 2) | ((rgb & 0x001F));
-          //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0040) >> 1) | ((rgb & 0x001F));
-          //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x001F));
-          rgb =     ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0080) >> 2) | ((rgb & 0x001F);
+          //rgb =   ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0200) >> 4) | ((rgb & 0x001F));
+          //rgb =   ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0100) >> 3) | ((rgb & 0x001F));
+          rgb =   ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0080) >> 2) | ((rgb & 0x001F));
+          //rgb =   ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x0040) >> 1) | ((rgb & 0x001F));
+          //rgb =   ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x001F));
           *tptr++ = ((rgb & 0xFF00) >> 8) | ((rgb & 0x00FF) << 8); // swap color bytes
         }
       }
@@ -121,10 +119,6 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
       
       //if (padding)  bitmap.read((uint8_t*)tptr, padding); // Read any byte padding
       if (padding)  bitmap.read((uint8_t*)lineBuffer, padding); // Read any byte padding
-
-      //selectCSl(TFT_CS);
-      //spr.pushSprite(0, 0);
-      //selectCSl(SD_CS);
     }
     //tft.setSwapBytes(false);       // 
     //spr.setSwapBytes(false);       //
