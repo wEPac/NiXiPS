@@ -1,8 +1,3 @@
-
-#ifndef   USE_SPI
-#define   USE_SPI       // SDcard reader is using SPI
-#endif
-
 #ifndef   BMP_UTILS_H
 #define   BMP_UTILS_H
 
@@ -41,14 +36,7 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
   //if ((x >= tft.width()) || (y >= tft.height())) return;
 
   File bmpFS;
-
-  // Open requested file on SD card
-#ifdef USE_SPI
-  bmpFS = SD.open(filename, FILE_READ);
-#else
-  bmpFS = SD_MMC.open(filename);
-#endif
-
+  bmpFS = SD.open(filename, FILE_READ);    // Open requested file on SD card
   if (!bmpFS)
   {
     //Serial.println("File not found\n");
@@ -65,8 +53,7 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
   uint8_t     r, g, b;
   //uint32_t    startTime =     millis();
 
-  //if (BMPread16(bmpFS) == 0x4D42)         // signature
-  //{
+  // BMP header
   signature =       BMPread16(bmpFS);   // signature
   BMPread32(bmpFS);                     // skip File Size
   BMPread32(bmpFS);                     // skip Reserved
@@ -77,9 +64,7 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
   BMPread16(bmpFS);                     // skip Plane
   depth =           BMPread16(bmpFS);   // Bit per Pixel
   field =           depth / 8;          // Byte per Pixel
-
-    //if ((read16(bmpFS) == 1) && (read16(bmpFS) == 24) && (read32(bmpFS) == 0))
-    //{ // if Plane == 1, Bit per Pixels == 24, Compression == 0
+  //read32(bmpFS);                        // skip Compression
 
   if (signature == 0x4D42 && ( (depth == 16) || (depth == 24) ) )
   //if ( (depth == 16) || (depth == 24) )
@@ -92,8 +77,8 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
     uint16_t  padding =   (4 - ((w * field) & 3)) & 3;  // each BMP row is n x 4 bytes
     uint8_t   lineBuffer[w * field];
     //uint8_t   lineBuffer[((w * field + 31) / 32) * 4]; // full row
-    // row size    = ((w * field + 31) / 32) * 4;
-    // pixel array = h * (((w * field + 31) / 32) * 4);
+    // row size    =        ((w * field + 31) / 32) * 4;
+    // pixel array =        h * (((w * field + 31) / 32) * 4);
 
     for (row = 0; row < h; row++)
     {
