@@ -83,7 +83,7 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
 
     for (row = 0; row < h; row++)
     //row = ???
-    // while (row--)
+    //while (row--)
     {
       bitmap.read(lineBuffer, sizeof(lineBuffer));
       uint8_t*  bptr =    lineBuffer;
@@ -109,12 +109,14 @@ void BMPdraw(const char *filename, int16_t x, int16_t y)
           //*tptr++ = ((rgb & 0x7C00) << 1) | ((rgb & 0x03E0) << 1) | ((rgb & 0x001F));
         }
       }
-        
-      if (padding)  bitmap.read((uint8_t*)tptr, padding); // Read any byte padding
+      
 
       // Push the pixel line to screen, pushImage will crop the line if needed
       //tft.pushImage(x, y--, w, 1, (uint16_t*)lineBuffer);
       spr.pushImage(x, y--, w, 1, (uint16_t*)lineBuffer);
+      
+      //if (padding)  bitmap.read((uint8_t*)tptr, padding); // Read any byte padding
+      if (padding)  bitmap.read((uint8_t*)lineBuffer, padding); // Read any byte padding
 
       //selectCSl(TFT_CS);
       //spr.pushSprite(0, 0);
